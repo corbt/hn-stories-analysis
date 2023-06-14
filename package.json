@@ -1,0 +1,19 @@
+{
+  "name": "reddit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/webtorrent": "^0.109.3",
+    "tsx": "^3.12.7",
+    "typescript": "^5.1.3",
+    "webtorrent": "^2.1.0"
+  }
+}
