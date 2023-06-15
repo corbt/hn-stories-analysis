@@ -3,7 +3,7 @@
 set -e
 
 # Install deps
-apt-get install -y zsh curl git tmux
+apt-get install -y zsh curl git tmux htop
 
 # Change the default shell to zsh
 chsh -s $(which zsh)

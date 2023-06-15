@@ -4,7 +4,6 @@ import random
 import os
 import torch
 import torch.nn as nn
-import transformers
 from transformers import (
     AutoModel, AutoConfig, 
     AutoTokenizer, logging,
@@ -12,10 +11,10 @@ from transformers import (
     DataCollatorWithPadding,
     Trainer, TrainingArguments
 )
+# from datasets import Dataset, DatasetDict
 from transformers.modeling_outputs import SequenceClassifierOutput
 import pandas as pd
 import numpy as np
-from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 import wandb
 
 load_dotenv()
@@ -41,7 +40,7 @@ CONFIG = {
     "label_cols" : ['upvote_ratio', 'log_score'],   
 }
 
-print("Loading model...")
+print("Loading dataset...")
 train = pd.read_feather('/workspace/data/reddit/submissions/RS_2023-01-train.arrow')
 test = pd.read_feather('/workspace/data/reddit/submissions/RS_2023-01-test.arrow')
 
@@ -148,7 +147,6 @@ def compute_metrics(eval_pred):
 
 # set seed to produce similar folds
 SEED = 1318
-cv = MultilabelStratifiedKFold(n_splits=CONFIG.get("folds", 3), shuffle=True, random_state=SEED)
 
 train = train.reset_index(drop=True)
 
@@ -224,5 +222,6 @@ trainer = CustomTrainer(
     optimizers=(optimizer, scheduler),
     compute_metrics=compute_metrics
 )
-# LAUNCH THE TRAINER
+
+print("Training model...")
 trainer.train()
