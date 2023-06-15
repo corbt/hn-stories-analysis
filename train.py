@@ -25,7 +25,6 @@ logging.set_verbosity_warning()
 
 CONFIG = {
     "model_name": "microsoft/deberta-v3-base",# "distilbert-base-uncased",
-    "device": 'cuda' if torch.cuda.is_available() else 'cpu',
     "dropout": random.uniform(0.01, 0.60),
     "max_length": 512,
     "train_batch_size": 8,
@@ -43,39 +42,6 @@ CONFIG = {
 print("Loading dataset...")
 train = pd.read_feather('/workspace/data/reddit/submissions/RS_2023-01-train.arrow')
 test = pd.read_feather('/workspace/data/reddit/submissions/RS_2023-01-test.arrow')
-
-class CustomIterator(torch.utils.data.Dataset):
-    def __init__(self, df, tokenizer, labels=CONFIG['label_cols'], is_train=True):
-        self.df = df
-        self.tokenizer = tokenizer
-        self.max_seq_length = CONFIG["max_length"]# tokenizer.model_max_length
-        self.labels = labels
-        self.is_train = is_train
-        
-    def __getitem__(self,idx):
-        tokens = self.tokenizer(
-                    self.df.loc[idx, 'formatted_text'],#.to_list(),
-                    add_special_tokens=True,
-                    padding='max_length',
-                    max_length=self.max_seq_length,
-                    truncation=True,
-                    return_tensors='pt',
-                    return_attention_mask=True
-                )     
-        res = {
-            'input_ids': tokens['input_ids'].to(CONFIG.get('device')).squeeze(),
-            'attention_mask': tokens['attention_mask'].to(CONFIG.get('device')).squeeze()
-        }
-        
-        if self.is_train:
-            res["labels"] = torch.tensor(
-                self.df.loc[idx, self.labels].to_list(), 
-            ).to(CONFIG.get('device')) 
-            
-        return res
-    
-    def __len__(self):
-        return len(self.df)
       
 class MeanPooling(nn.Module):
     def __init__(self):
@@ -189,7 +155,7 @@ train_dataset = CustomIterator(train, tokenizer)
 valid_dataset = CustomIterator(test.sample(1000), tokenizer)
 # init model
 model = FeedBackModel(CONFIG['model_name'])
-model.to(CONFIG['device'])
+model.to('cuda')
 
 # SET THE OPITMIZER AND THE SCHEDULER
 # no decay for bias and normalization layers
