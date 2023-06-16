@@ -1,6 +1,7 @@
 #! /bin/bash
 
 set -e
+cd $(dirname $0)
 
 # Install deps
 apt-get install -y zsh curl git tmux htop entr
@@ -12,17 +13,17 @@ chsh -s $(which zsh)
 cp .zshrc ~/.zshrc
 
 # Install Oh My ZSH
-# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Install ASDF version manager
-# git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.12.0
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.12.0
 
 # Copy the .tool-versions file
 cp .tool-versions ~/.tool-versions
 
-# Add ASDF to zsh and bash
-# echo -e '\n. $HOME/.asdf/asdf.bash' >> ~/.bashrc
-# echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+# Add ASDF to bash
+echo -e '\n. $HOME/.asdf/asdf.bash' >> ~/.bashrc
+echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
 
 # Add the nodejs plugin to ASDF
 asdf plugin-add nodejs

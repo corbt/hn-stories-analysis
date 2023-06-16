@@ -6,7 +6,12 @@ const BATCH_SIZE = 1000;
 
 const outFile = "/workspace/data/hn/full_dump.jsonl";
 
-const existingIds = new Set<number>();
+console.log("Reading existing ids from", outFile);
+
+const maxId: number = await fetch(`${BASE_URL}/maxitem.json`).then((res) => res.json());
+
+let lowestIdPulled = maxId;
+let highestIdPulled = 0;
 
 // check if outfile exists
 if (fs.existsSync(outFile)) {
@@ -17,29 +22,32 @@ if (fs.existsSync(outFile)) {
   })) {
     try {
       const { id } = JSON.parse(line);
-      existingIds.add(id);
+      if (id < lowestIdPulled) {
+        lowestIdPulled = id;
+      }
+      if (id > highestIdPulled) {
+        highestIdPulled = id;
+      }
     } catch (e) {
       console.error("Error parsing line", line, e);
     }
   }
 }
 
-const maxId: number = await fetch(`${BASE_URL}/maxitem.json`).then((res) => res.json());
+let totalPulled = highestIdPulled - lowestIdPulled;
 
 console.log(
-  `Already pulled ${existingIds.size} / ${maxId} items (${Math.round(
-    (existingIds.size / maxId) * 100
-  )}%)`
+  `Already pulled ${totalPulled} / ${maxId} items (${Math.round((totalPulled / maxId) * 100)}%)`
 );
 
-const remainingToPull = maxId - existingIds.size;
+const remainingToPull = maxId - totalPulled;
 
 let totalProcessed = 0;
 let nextId = maxId;
 while (nextId > 0) {
   const batch: number[] = [];
   while (batch.length < BATCH_SIZE && nextId > 0) {
-    if (!existingIds.has(nextId)) {
+    if (nextId > highestIdPulled || nextId < lowestIdPulled) {
       batch.push(nextId);
     }
     nextId--;
@@ -72,10 +80,3 @@ while (nextId > 0) {
     }%)`
   );
 }
-// if (await fs.access(outFile)) {
-//   const lines = await fs.readFile(outFile, "utf-8");
-//   for (const line of lines.split("\n")) {
-//     const { id } = JSON.parse(line);
-//     existingIds.add(id);
-//   }
-// }

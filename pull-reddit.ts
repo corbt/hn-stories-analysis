@@ -1,16 +1,10 @@
 import WebTorrent from "webtorrent";
-import fetch from "fetch";
-import fs from "fs/promises";
 
 console.log("Starting client");
 
 const client = new WebTorrent();
 
-// Note that the torrent will never "finish" because we are not downloading the entire file. So you just have to
-// kill the process when you are done.
-
 // From https://academictorrents.com/details/c861d265525c488a9439fb874bd9c3fc38dcdfa5
-
 const magnetURI =
   "magnet:?xt=urn:btih:c861d265525c488a9439fb874bd9c3fc38dcdfa5&tr=https%3A%2F%2Facademictorrents.com%2Fannounce.php&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce";
 
