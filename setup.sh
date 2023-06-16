@@ -9,21 +9,29 @@ apt-get install -y zsh curl git tmux htop entr
 # Change the default shell to zsh
 chsh -s $(which zsh)
 
-# Copy the .zshrc file
-cp .zshrc ~/.zshrc
-
 # Install Oh My ZSH
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# Check whether the ~/.oh-my-zsh directory already exists
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  # If not, install it
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+fi
+
+# Copy the .zshrc file
+cp templates/.zshrc ~/.zshrc
 
 # Install ASDF version manager
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.12.0
+if [ ! -d "$HOME/.asdf" ]; then
+  git clone https://github.com/asdf-vm/asdf.git $HOME/.asdf --branch v0.12.0
 
-# Copy the .tool-versions file
-cp .tool-versions ~/.tool-versions
+  # Add ASDF to bash
+  echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+  echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
 
-# Add ASDF to bash
-echo -e '\n. $HOME/.asdf/asdf.bash' >> ~/.bashrc
-echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+  . $HOME/.asdf/asdf.sh
+fi
+
+# Copy the ASDF config file
+cp templates/.tool-versions templates/.default-npm-packages $HOME
 
 # Add the nodejs plugin to ASDF
 asdf plugin-add nodejs

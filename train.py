@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from datasets import load_from_disk 
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, TrainingArguments, Trainer, DataCollatorWithPadding
-from sklearn.metrics import mean_squared_error
 import wandb
 
 print("Starting up")
@@ -30,7 +29,7 @@ tokenizer = AutoTokenizer.from_pretrained('microsoft/deberta-v3-base', use_fast=
 args = TrainingArguments(
   evaluation_strategy = "steps",
   save_strategy="steps",
-  eval_steps=500,
+  eval_steps=1000,
   learning_rate=1e-5,
   per_device_train_batch_size=16,
   per_device_eval_batch_size=32,

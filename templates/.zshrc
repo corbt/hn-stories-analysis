@@ -10,3 +10,4 @@ plugins=(git z asdf)
 
 source $ZSH/oh-my-zsh.sh
 
+cd /workspace
