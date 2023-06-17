@@ -4,7 +4,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer, Trai
 import wandb
 import os
 
-print("Starting up")
+BASE_MODEL = "microsoft/deberta-v3-large"
 
 load_dotenv('/workspace/.env')
 
@@ -15,9 +15,11 @@ if os.getenv('WANDB_NAME'):
   report_to = "wandb"
   wandb.init(project="hn-front-page", job_type='train')
 
+print(f"Staring training. Model: {BASE_MODEL}. Reporting to: {report_to}")
+
 print("Loading model...")
 model = AutoModelForSequenceClassification.from_pretrained(
-  "microsoft/deberta-v3-large",
+  BASE_MODEL,
   num_labels=1
 )
 model.to('cuda')
@@ -28,7 +30,7 @@ dataset = load_from_disk('/workspace/data/hn/stories-dataset')
 print(dataset)
 
 print("Loading tokenizer...")
-tokenizer = AutoTokenizer.from_pretrained('microsoft/deberta-v3-large', use_fast=True)
+tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, use_fast=True)
 
 args = TrainingArguments(
   evaluation_strategy = "steps",
@@ -36,7 +38,7 @@ args = TrainingArguments(
   eval_steps=10000,
   logging_steps=1000,
   learning_rate=1e-5,
-  per_device_train_batch_size=8,
+  per_device_train_batch_size=4,
   per_device_eval_batch_size=32,
   num_train_epochs=3,
   report_to=report_to,
