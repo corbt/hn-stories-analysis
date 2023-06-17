@@ -17,7 +17,7 @@ if os.getenv('WANDB_NAME'):
 
 print("Loading model...")
 model = AutoModelForSequenceClassification.from_pretrained(
-  "microsoft/deberta-v3-base",
+  "microsoft/deberta-v3-large",
   num_labels=1
 )
 model.to('cuda')
@@ -28,21 +28,23 @@ dataset = load_from_disk('/workspace/data/hn/stories-dataset')
 print(dataset)
 
 print("Loading tokenizer...")
-tokenizer = AutoTokenizer.from_pretrained('microsoft/deberta-v3-base', use_fast=True)
+tokenizer = AutoTokenizer.from_pretrained('microsoft/deberta-v3-large', use_fast=True)
 
 args = TrainingArguments(
   evaluation_strategy = "steps",
   save_strategy="steps",
-  eval_steps=3000,
+  eval_steps=10000,
+  logging_steps=1000,
   learning_rate=1e-5,
-  per_device_train_batch_size=16,
+  per_device_train_batch_size=8,
   per_device_eval_batch_size=32,
   num_train_epochs=3,
   report_to=report_to,
   weight_decay=1e-6,
-  output_dir="/workspace/models/hn/frontpage",
-  save_total_limit=1,
+  output_dir="/workspace/models/hn/frontpage/deberta-v3-large",
+  save_total_limit=2,
   warmup_steps=1000,
+  metric_for_best_model="eval_loss",
   # metric_for_best_model="rmse",
   # group_by_length=True,
 )
