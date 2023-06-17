@@ -32,11 +32,11 @@ args = TrainingArguments(
   learning_rate=1e-5,
   per_device_train_batch_size=16,
   per_device_eval_batch_size=32,
-  num_train_epochs=1,
+  num_train_epochs=3,
   report_to="wandb",
   weight_decay=1e-6,
   output_dir="/workspace/models/hn/frontpage",
-  save_total_limit=4,
+  save_total_limit=1,
   warmup_steps=1000,
   # metric_for_best_model="rmse",
   # group_by_length=True,
@@ -53,7 +53,7 @@ trainer = Trainer(
   data_collator=data_collator,
 )
 
-wandb.init(project="hn-front-page", job_type='train')
+wandb.init(project="hn-front-page", job_type='train', name='3-epoch-randomized')
 
 # Test on the eval dataset to start
 print("Testing...")
