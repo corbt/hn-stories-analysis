@@ -53,7 +53,7 @@ trainer = Trainer(
   data_collator=data_collator,
 )
 
-wandb.init(project="hn-front-page", job_type='train', name='3-epoch-randomized')
+wandb.init(project="hn-front-page", job_type='train', name='no-dead-stories')
 
 # Test on the eval dataset to start
 print("Testing...")
