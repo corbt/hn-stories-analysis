@@ -1,0 +1,8 @@
+Try:
+ - Baseline against GPT-3.5
+ - Use features extracted from 3.5 as inputs to fine tuning (eg. intellectual curiosity, technical, etc.)
+ - Ablation studies in the features I give to the model
+ - Baseline against naive "guess the average submission acceptance rate" by domain/poster
+ - Baseline against XGBoost just based on domain/poster acceptance rates?
+ - Try T5 variants, roberta-base
+ - hparam sweep for learning rate deberta-base
